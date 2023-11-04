@@ -59,4 +59,21 @@ export class AuthService {
 
     return { token: token, role: user.role, id: user.id };
   }
+  async logout(loginDto: LoginDto): Promise<{ token: string, role: string[] , id: string}> {
+    const { email, password } = loginDto;
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      throw new UnauthorizedException('User is not registered yet please signup.');
+    }
+
+    const isPasswordMatched = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordMatched) {
+      throw new UnauthorizedException('Incorrect password!');
+    }
+
+    const token = this.jwtService.sign({ id: user._id, role: user.role });
+
+    return { token: token, role: user.role, id: user.id };
+  }
 }
