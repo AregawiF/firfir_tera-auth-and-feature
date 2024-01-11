@@ -7,6 +7,7 @@ import { User, UserSchema } from './schemas/user.schema';
 import { APP_GUARD, Reflector } from '@nestjs/core';
 import { RolesGuard } from './guards/roles.guard';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { JwtStrategy } from './auth/strategies/jwt.strategy';
     }),
     MongooseModule.forRoot(process.env.DB_URI),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    AuthModule, RecipeModule],
+    AuthModule, RecipeModule, UserModule],
   providers: [{
     provide: APP_GUARD,
     useClass: RolesGuard,

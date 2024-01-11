@@ -109,8 +109,8 @@ export class RecipeService {
     return createdRecipe;
   }
 
-  async searchByTitle(title: string): Promise<Recipe[]> {
-    const recipes = await this.recipeModel.find({ title });
+  async searchByTitle(name: string): Promise<Recipe[]> {
+    const recipes = await this.recipeModel.find({ name });
     if (!recipes || recipes.length === 0) {
       throw new NotFoundException('Recipe not found!');
     }

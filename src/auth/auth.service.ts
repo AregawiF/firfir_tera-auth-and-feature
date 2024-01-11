@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from 'src/schemas/user.schema';
+import { User } from '../schemas/user.schema';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from '../dto/signup.dto';
@@ -16,37 +16,32 @@ export class AuthService {
     private jwtService: JwtService,
   ) { }
 
-  async signUp(signUpDto: SignUpDto): Promise<{ token: string }> {
-    const { 
-      // name,
-      firstName, lastName, email, password, role } = signUpDto;
+  async signUp(signUpDto: SignUpDto): Promise<{ token: string, role: string[] }> {
+    const { firstName, lastName, email, password, role } = signUpDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     try {
-
       const user = await this.userModel.create({
-        // name,
-        // username,
         firstName,
         lastName,
         email,
         password: hashedPassword,
         role: Array.isArray(role) ? role : [role],
       });
-      
+
       const token = this.jwtService.sign({ id: user._id, role: user.role });
-      
-      return { token };
+
+      return { token: token, role: user.role };
     } catch (error) {
       if (error instanceof MongoError && error.code === 11000) {
         throw new UnauthorizedException('Email is already in use');
       }
-      throw error; 
+      throw error;
     }
   }
 
-  async login(loginDto: LoginDto): Promise<{ token: string }> {
+  async login(loginDto: LoginDto): Promise<{ token: string, role: string[] }> {
     const { email, password } = loginDto;
     const user = await this.userModel.findOne({ email });
     if (!user) {
@@ -60,15 +55,8 @@ export class AuthService {
       throw new UnauthorizedException('Incorrect password!');
     }
 
-    // if (!this.isValidRole(role) || !user.role.includes(role)) {
-    //   throw new UnauthorizedException('Invalid role');
-    // }
-
     const token = this.jwtService.sign({ id: user._id, role: user.role });
 
-    return { token };
+    return { token: token, role: user.role };
   }
-  // private isValidRole(role: string): boolean {
-  //   return role === 'cook' || role === 'normal';
-  // }
 }

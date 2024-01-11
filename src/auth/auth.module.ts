@@ -24,7 +24,7 @@ import { UserSchema } from 'src/schemas/user.schema';
     }),
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
   ],
-  
+
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
   exports: [JwtStrategy, PassportModule, AuthService],

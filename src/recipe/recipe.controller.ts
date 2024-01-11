@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Headers, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Headers, UseGuards, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/Upload/multer.config';
@@ -25,19 +25,20 @@ export class RecipeController {
   @UseInterceptors(FileInterceptor('image', multerConfig))
   @Roles(Role.COOK)
   async createRecipe(
-  @Body("name") name:string,
-  @Body("description") description:string,
-  @Body("cookTime") cookTime:number,
-  @Body("people")  people:number,
-  @Body("ingredients") ingredients:string[],
-  @Body("steps")  steps:string[],
-  @Body("fasting") fasting:boolean,
-  @Body("type")  type:Category,
-  @UploadedFile() file: Express.Multer.File,
+    @Body("name") name: string,
+    @Body("description") description: string,
+    @Body("cookTime") cookTime: number,
+    @Body("people") people: number,
+    @Body("ingredients") ingredients: string[],
+    @Body("steps") steps: string[],
+    @Body("fasting") fasting: boolean,
+    @Body("type") type: Category,
+    @UploadedFile() file: Express.Multer.File,
 
 
-     @Headers("Authorization") authorization: string): Promise<Recipe> {
-    const createdRecipe = await this.recipeService.insertRecipe({name,description,cookTime,people,ingredients,steps,fasting,type,image:file.path,cook_id:"1"}, authorization);
+    @Headers("Authorization") authorization: string): Promise<Recipe> {
+    this.uploadService.uploadFile(file)
+    const createdRecipe = await this.recipeService.insertRecipe({ name, description, cookTime, people, ingredients, steps, fasting, type, image: file.path, cook_id: "1" }, authorization);
     return createdRecipe;
   }
 
