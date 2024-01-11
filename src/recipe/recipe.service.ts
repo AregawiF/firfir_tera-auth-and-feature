@@ -15,7 +15,7 @@ export class RecipeService {
   constructor(
     @InjectModel(Recipe.name)
     private recipeModel: Model<Recipe>,
-  ) {}
+  ) { }
 
   async showAll(): Promise<Recipe[]> {
     const recipes = await this.recipeModel.find()
@@ -35,6 +35,18 @@ export class RecipeService {
       throw new NotFoundException('Could not find recipe')
     }
     return recipe
+  }
+
+  async getRecipesByCookId(cookId: string): Promise<Recipe[]> {
+    try {
+      const recipes = await this.recipeModel.find({ cook_id: cookId }).exec();
+      if (!recipes || recipes.length === 0) {
+        throw new NotFoundException('No recipes found');
+      }
+      return recipes;
+    } catch (error) {
+      throw new NotFoundException('No recipes found');
+    }
   }
 
   async getFasting(fasting) {
@@ -84,14 +96,6 @@ export class RecipeService {
     return recipes;
   }
 
-  // async insertRecipe(recipe: Recipe): Promise<Recipe> {
-  //   const createdRecipe = await this.recipeModel.create(recipe)
-  //   return createdRecipe
-  // }
-
-  // async insertRecipe(recipe: Recipe, user: User): Promise<Recipe> {
-  //   // if (user.role.includes('cook')) {
-  //   recipe.cook_id = user._id;
   async insertRecipe(recipe: Recipe, authorizationHeader: string): Promise<Recipe> {
     const decodedToken = await this.decodeToken(authorizationHeader);
 
@@ -137,7 +141,7 @@ export class RecipeService {
     return deletedRecipe as Recipe;
   }
 
-  
+
   private decodeToken(authorizationHeader: string): JwtPayload | null {
     if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
       const token = authorizationHeader.substring(7);

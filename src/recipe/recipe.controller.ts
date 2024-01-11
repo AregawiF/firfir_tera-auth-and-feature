@@ -35,6 +35,12 @@ export class RecipeController {
     return await this.recipeService.getSingleRecipe(prodId);
   }
 
+  @Get('myrecipes/:cookId')
+  @Roles(Role.COOK)
+  async getRecipesByCookId(@Param('cookId') cookId: string): Promise<Recipe[]> {
+    return this.recipeService.getRecipesByCookId(cookId);
+  }
+
   @Get(':title')
   async searchRecipe(
     @Param('title') title: string,
