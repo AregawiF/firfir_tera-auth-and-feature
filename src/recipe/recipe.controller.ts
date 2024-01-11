@@ -1,6 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Headers, UseGuards } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
-import { Recipe } from 'src/schemas/recipe.schema';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from 'src/Upload/multer.config';
+import { UploadService } from 'src/Upload/upload.service';
+import { Category, Recipe } from 'src/schemas/recipe.schema';
 import { createRecipeDto, updateRecipeDto } from 'src/dto/recipe.dto';
 import { Roles } from '../decorators/roles.decorator';
 import { RolesGuard } from '../guards/roles.guard';
@@ -11,7 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 @Controller('recipes')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 export class RecipeController {
-  constructor(private recipeService: RecipeService) { }
+  constructor(private recipeService: RecipeService, private readonly uploadService: UploadService) { }
 
   @Get()
   async getAllRecipes(): Promise<Recipe[]> {
@@ -19,9 +22,22 @@ export class RecipeController {
   }
 
   @Post('new')
+  @UseInterceptors(FileInterceptor('image', multerConfig))
   @Roles(Role.COOK)
-  async createRecipe(@Body() recipe: createRecipeDto, @Headers("Authorization") authorization: string): Promise<Recipe> {
-    const createdRecipe = await this.recipeService.insertRecipe(recipe, authorization);
+  async createRecipe(
+  @Body("name") name:string,
+  @Body("description") description:string,
+  @Body("cookTime") cookTime:number,
+  @Body("people")  people:number,
+  @Body("ingredients") ingredients:string[],
+  @Body("steps")  steps:string[],
+  @Body("fasting") fasting:boolean,
+  @Body("type")  type:Category,
+  @UploadedFile() file: Express.Multer.File,
+
+
+     @Headers("Authorization") authorization: string): Promise<Recipe> {
+    const createdRecipe = await this.recipeService.insertRecipe({name,description,cookTime,people,ingredients,steps,fasting,type,image:file.path,cook_id:"1"}, authorization);
     return createdRecipe;
   }
 
