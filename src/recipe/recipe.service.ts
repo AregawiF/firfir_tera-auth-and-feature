@@ -1,11 +1,15 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Recipe } from 'src/schemas/recipe.schema';
-import { Query } from 'express-serve-static-core'
+import { Recipe } from '../schemas/recipe.schema';
+import { Query } from 'express-serve-static-core';
 import * as jwt from 'jsonwebtoken';
 
-interface JwtPayload {
+export interface JwtPayload {
   id: string;
   role: string | string[];
 }
@@ -15,74 +19,66 @@ export class RecipeService {
   constructor(
     @InjectModel(Recipe.name)
     private recipeModel: Model<Recipe>,
-  ) { }
+  ) {}
 
   async showAll(): Promise<Recipe[]> {
-    const recipes = await this.recipeModel.find()
-    return recipes
+    const recipes = await this.recipeModel.find();
+    return recipes;
   }
 
   async getSingleRecipe(recipeId: string) {
-    console.log(recipeId)
     let recipe;
     try {
-      recipe = await this.recipeModel.findById(recipeId).exec();
-    }
-    catch {
-      throw new NotFoundException('Could not find recipe')
+      recipe = await this.recipeModel.findById(recipeId);
+    } catch {
+      throw new NotFoundException('Could not find recipe');
     }
     if (!recipe) {
-      throw new NotFoundException('Could not find recipe')
+      throw new NotFoundException('Could not find recipe');
     }
-    return recipe
+    return recipe;
   }
 
   async getRecipesByCookId(cookId: string): Promise<Recipe[]> {
     try {
-      const recipes = await this.recipeModel.find({ cook_id: cookId }).exec();
+      const recipes = await this.recipeModel.find({ cook_id: cookId });
       if (!recipes || recipes.length === 0) {
         throw new NotFoundException('No recipes found');
       }
       return recipes;
     } catch (error) {
-      throw new NotFoundException('No recipes found');
+      throw new NotFoundException('Recipe Not Found');
     }
   }
 
   async getFasting(fasting) {
-    let recipe
+    let recipe;
     try {
-      recipe = await this.recipeModel.find({ fasting: fasting })
-
+      recipe = await this.recipeModel.find({ fasting: fasting });
+      if (!recipe || recipe.length === 0) {
+        throw new NotFoundException('Recipe Not Found');
+      }
+      return recipe;
+    } catch (error) {
+      throw new NotFoundException('Recipe Not Found');
     }
-    catch {
-      throw new NotFoundException('Recipe not found')
-    }
-    if (!recipe) {
-      throw new NotFoundException('Recipe Not Found')
-    }
-    return recipe
-
   }
 
   async getByType(type) {
-    console.log(type)
-    let recipe
+    console.log(type);
+    let recipe;
     try {
-      recipe = await this.recipeModel.find({ type: type })
-
+      recipe = await this.recipeModel.find({ type: type });
+    } catch {
+      throw new NotFoundException('Recipe not found');
     }
-    catch {
-      throw new NotFoundException('Recipe not found')
+    if (!recipe || recipe.length === 0) {
+      throw new NotFoundException('Recipe Not Found');
     }
-    if (!recipe) {
-      throw new NotFoundException('Recipe Not Found')
-    }
-    return recipe
+    return recipe;
   }
 
   async find(query: Query): Promise<Recipe[]> {
-
     const keyword: any = {};
 
     if (query.keyword) {
@@ -96,13 +92,18 @@ export class RecipeService {
     return recipes;
   }
 
-  async insertRecipe(recipe: Recipe, authorizationHeader: string): Promise<Recipe> {
+  async insertRecipe(
+    recipe: Recipe,
+    authorizationHeader: string,
+  ): Promise<Recipe> {
     const decodedToken = await this.decodeToken(authorizationHeader);
 
     if (decodedToken.role.includes('cook')) {
       recipe.cook_id = decodedToken.id;
     } else {
-      throw new UnauthorizedException('Only cooks are allowed to create recipes');
+      throw new UnauthorizedException(
+        'Only cooks are allowed to create recipes',
+      );
     }
 
     const createdRecipe = await this.recipeModel.create(recipe);
@@ -141,19 +142,23 @@ export class RecipeService {
     return deletedRecipe as Recipe;
   }
 
-
-  private decodeToken(authorizationHeader: string): JwtPayload | null {
+  async decodeToken(authorizationHeader: string): Promise<any> {
     if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
       const token = authorizationHeader.substring(7);
       try {
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+        const decodedToken = jwt.verify(
+          token,
+          process.env.JWT_SECRET,
+        ) as JwtPayload;
         return decodedToken;
       } catch (error) {
         console.error('Token verification failed:', error.message);
         throw new UnauthorizedException('Invalid token');
       }
     } else {
-      throw new UnauthorizedException('No JWT Token found in the Authorization header');
+      throw new UnauthorizedException(
+        'No JWT Token found in the Authorization header',
+      );
     }
   }
 }

@@ -1,13 +1,12 @@
 // import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 // import { Category } from "../schemas/recipe.schema";
 
-
 // export class createRecipeDto {
 //   @IsString()
 //   @IsNotEmpty()
 //   readonly title: string;
 
-//   @IsString() 
+//   @IsString()
 //   readonly description: string;
 
 //   @IsString()
@@ -44,37 +43,40 @@
 //   @IsEnum(Category, { message: 'please enter the appropriate category!!' })
 //   readonly category: Category;
 // }
-import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-import { Category } from "../schemas/recipe.schema";
-
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { Category } from '../schemas/recipe.schema';
 
 export class createRecipeDto {
   @IsString()
   @IsNotEmpty()
-   name: string;
+  name: string;
 
-  @IsString() 
+  @IsString()
   @IsNotEmpty()
-   description: string;
+  description: string;
 
   @IsNumber()
   @IsNotEmpty()
-
-   cookTime: number;
+  cookTime: number;
 
   @IsNumber()
   @IsNotEmpty()
-
   people: number;
 
   @IsArray()
   @IsNotEmpty()
-
   ingredients: string[];
 
   @IsArray()
   @IsNotEmpty()
-
   steps: string[];
 
   @IsBoolean()
@@ -92,16 +94,15 @@ export class createRecipeDto {
   @IsOptional()
   @IsString()
   cook_id: string;
-
 }
 export class updateRecipeDto {
   @IsString()
   @IsOptional()
-   name: string;
+  name: string;
 
-  @IsString() 
+  @IsString()
   @IsOptional()
-   description: string;
+  description: string;
 
   @IsNumber()
   @IsOptional()
@@ -138,6 +139,4 @@ export class updateRecipeDto {
   @IsString()
   @IsOptional()
   cook_id: string;
-
 }
-
