@@ -34,10 +34,10 @@ export class RecipeController {
     @Body("fasting") fasting: boolean,
     @Body("type") type: Category,
     @UploadedFile() file: Express.Multer.File,
-
-
     @Headers("Authorization") authorization: string): Promise<Recipe> {
     this.uploadService.uploadFile(file)
+    
+    console.log("the file is", name,description,cookTime,people,ingredients,steps,fasting,type,file.path)
     const createdRecipe = await this.recipeService.insertRecipe({ name, description, cookTime, people, ingredients, steps, fasting, type, image: file.path, cook_id: "1" }, authorization);
     return createdRecipe;
   }
@@ -49,12 +49,14 @@ export class RecipeController {
 
   @Get(':id')
   async getProduct(@Param('id') prodId: string) {
+    console.log(prodId)
     return await this.recipeService.getSingleRecipe(prodId);
   }
 
   @Get('myrecipes/:cookId')
   @Roles(Role.COOK)
   async getRecipesByCookId(@Param('cookId') cookId: string): Promise<Recipe[]> {
+    console.log(cookId)
     return this.recipeService.getRecipesByCookId(cookId);
   }
 
@@ -75,16 +77,53 @@ export class RecipeController {
     }
   }
 
+  // @Patch(':id')
+  // @Roles(Role.COOK)
+  
+  // async updateRecipe(
+  //   @Param('id')
+  //   id: string,
+  //   @Body()
+  //   recipe: updateRecipeDto
+  // ): Promise<Recipe> {
+  //   console.log("the id is-",id)
+  //   return this.recipeService.updateById(id, recipe)
+  // }
+
+
   @Patch(':id')
   @Roles(Role.COOK)
-  async updateRecipe(
-    @Param('id')
-    id: string,
-    @Body()
-    recipe: updateRecipeDto
-  ): Promise<Recipe> {
-    return this.recipeService.updateById(id, recipe)
-  }
+        async updateProduct(
+            @Param('id') recipeId: string,
+            @Body('name') recipeName : string,
+            @Body('description') recipeDesc : string,
+            @Body('cookTime') cooktime: number,
+            @Body('people') people: number,
+            @Body('steps')  steps: string[],
+            @Body('ingredients') ings: string[],
+            @Body('fasting') fasting : boolean,
+            @Body('type') type: string,
+            @Body('image') image: string
+            
+        ){ 
+            console.log("the Id is:", recipeId)
+            return await this.recipeService.updateRecipe(
+                recipeId,
+                recipeName,
+                recipeDesc,
+                cooktime,
+                people,
+                steps,
+                ings,
+                fasting,
+                type,
+                image
+                
+             );
+        }
+
+
+
 
   @Delete(':id')
   @Roles(Role.COOK)
