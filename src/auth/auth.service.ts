@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../schemas/user.schema';
@@ -35,7 +35,8 @@ export class AuthService {
       return { token: token, role: user.role };
     } catch (error) {
       if (error instanceof MongoError && error.code === 11000) {
-        throw new UnauthorizedException('Email is already in use');
+        // throw new UnauthorizedException('Email is already in use');
+        throw new ConflictException('Duplicate email');
       }
       throw error;
     }
@@ -45,7 +46,6 @@ export class AuthService {
     const { email, password } = loginDto;
     const user = await this.userModel.findOne({ email });
     if (!user) {
-      // throw new UnauthorizedException('Invalid email or password');
       throw new UnauthorizedException('User is not registered yet please signup.');
     }
 

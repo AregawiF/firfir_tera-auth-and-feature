@@ -795,7 +795,7 @@
     jsonc-parser "3.2.0"
     pluralize "8.0.0"
 
-"@nestjs/testing@^10.0.0":
+"@nestjs/testing@^10.3.0":
   version "10.3.0"
   resolved "https://registry.npmjs.org/@nestjs/testing/-/testing-10.3.0.tgz"
   integrity sha512-8DM+bw1qASCvaEnoHUQhypCOf54+G5R21MeFBMvnSk5DtKaWVZuzDP2GjLeYCpTH19WeP6LrrjHv3rX2LKU02A==
@@ -880,6 +880,17 @@
   version "1.0.4"
   resolved "https://registry.npmjs.org/@tsconfig/node16/-/node16-1.0.4.tgz"
   integrity sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==
+
+"@typegoose/typegoose@^12.0.0":
+  version "12.0.0"
+  resolved "https://registry.npmjs.org/@typegoose/typegoose/-/typegoose-12.0.0.tgz"
+  integrity sha512-ZkRtjiCO4k05bLPtUXX3Ho7zMLLOKvg6+3JBVtadpC4xUu5htfDf5H+TI+w1jL1d8Q51aN8mHH7L5hr7OSkzoA==
+  dependencies:
+    lodash "^4.17.20"
+    loglevel "^1.8.1"
+    reflect-metadata "^0.1.13"
+    semver "^7.5.4"
+    tslib "^2.6.2"
 
 "@types/babel__core@^7.1.14":
   version "7.20.5"
@@ -3770,7 +3781,7 @@ lodash.once@^4.0.0:
   resolved "https://registry.npmjs.org/lodash.once/-/lodash.once-4.1.1.tgz"
   integrity sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==
 
-lodash@^4.17.21, lodash@4.17.21:
+lodash@^4.17.20, lodash@^4.17.21, lodash@4.17.21:
   version "4.17.21"
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -3782,6 +3793,11 @@ log-symbols@^4.1.0:
   dependencies:
     chalk "^4.1.0"
     is-unicode-supported "^0.1.0"
+
+loglevel@^1.8.1:
+  version "1.8.1"
+  resolved "https://registry.npmjs.org/loglevel/-/loglevel-1.8.1.tgz"
+  integrity sha512-tCRIJM51SHjAayKwC+QAg8hT8vg6z7GSgLJKGvzuPb1Wc+hLzqtuVLxp6/HzSPOozuK+8ErAhy7U/sVzw8Dgfg==
 
 lru-cache@^5.1.1:
   version "5.1.1"
@@ -4004,7 +4020,7 @@ mongodb@6.2.0:
     bson "^6.2.0"
     mongodb-connection-string-url "^2.6.0"
 
-"mongoose@^6.0.2 || ^7.0.0 || ^8.0.0", mongoose@^8.0.4:
+"mongoose@^6.0.2 || ^7.0.0 || ^8.0.0", mongoose@^8.0.4, mongoose@~8.0.1:
   version "8.0.4"
   resolved "https://registry.npmjs.org/mongoose/-/mongoose-8.0.4.tgz"
   integrity sha512-wN9qvdevX3+922VnLT7CpaZRT3jmVCBOK2QMHMGeScQxDRnFMPpkuI9StEPpZo/3x8t+kbzH7F8RMPsyNwyM4w==

@@ -27,10 +27,10 @@ export class RolesGuard implements CanActivate {
     const authorizationHeader = request.headers.authorization;
 
     if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
-      const token = authorizationHeader.substring(7); 
+      const token = authorizationHeader.substring(7);
       try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
-  
+
         const user_role = decodedToken.role;
         const user_id = decodedToken.id;
         console.log(user_role)
@@ -56,6 +56,6 @@ export class RolesGuard implements CanActivate {
       throw new UnauthorizedException('No JWT Token found in the Authorization header');
     }
   }
-  
+
 }
 
