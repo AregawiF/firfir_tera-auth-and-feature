@@ -15,7 +15,7 @@ export class UserController {
   }
 
   @Patch(':id')
-  async updateUser(@Param('id') userId: string, @Body() firstName: string, @Body()lastName:string ,@Body() email: string) {
+  async updateUser(@Param('id') userId: string, @Body('firstName') firstName: string, @Body('lastName')lastName:string ,@Body('email') email: string) {
     //return this.userService.updateById(userId, updatedUser);
     try{
       this.userService.updateById(userId, firstName, lastName, email);

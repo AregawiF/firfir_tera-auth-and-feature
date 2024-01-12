@@ -14,6 +14,7 @@ export class UserService {
   ) { }
 
   async getById(userId: string) {
+
     let user;
     try {
       user = await this.userModel.findById(userId).exec();
@@ -38,21 +39,22 @@ export class UserService {
     // }
 
     // return updatedUser;
-    let updated
+    let updated ;
     try{
         updated = await this.userModel.findById(userId).exec();
     }
     catch{
         throw new NotFoundException('could not find reicpe')
     }
+
     if (firstName){
         updated.firstName = firstName   
     }
     if (lastName){
-        updated.description= lastName
+        updated.lastName= lastName
     }
     if (email){
-        updated.cookTime = email
+        updated.email = email
 
     }
     updated.save();
