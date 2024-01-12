@@ -1,8 +1,21 @@
+import { Document } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document} from 'mongoose';
 
-@Schema({ timestamps: true })
+export type UserDocument = User & Document;
+
+@Schema()
 export class User {
+  @Prop({ unique: true, required: true })
+  email: string;
+
+  @Prop({ required: true })
+  password: string;
+
+  @Prop({ default: ['normal'] })
+  role: string[];
+
+  @Prop()
+  _id: string;
 
   @Prop()
   firstName: string;
@@ -10,16 +23,11 @@ export class User {
   @Prop()
   lastName: string;
 
-  @Prop({ unique: [true, 'Duplicate email'] })
-  email: string;
+  @Prop()
+  title: string;
 
   @Prop()
-  password: string;
-
-  @Prop({ default: 'normal' })
-  role: string[];
+  bio: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-
-export type UserDocument = User & Document;

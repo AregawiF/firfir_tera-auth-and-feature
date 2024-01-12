@@ -1,169 +1,86 @@
-// import { Test, TestingModule } from '@nestjs/testing';
-// import { AuthService } from './auth.service';
-// import { getModelToken } from '@nestjs/mongoose';
-// import { JwtService } from '@nestjs/jwt';
-// import { ConflictException } from '@nestjs/common';
-// import * as bcrypt from 'bcrypt';
-// import { Model } from 'mongoose';
-// import { SignUpDto } from '../dto/signup.dto';
-// import { User, UserDocument } from '../schemas/user.schema';
-
-// describe('AuthService', () => {
-//   let authService: AuthService;
-//   let model: Model<User>;
-//   let jwtServiceMock: JwtService;
-
-//   const mockUser = {
-//     _id: '659fd3f8849fdf01fefa59d4',
-//     firstName: 'Aregawi',
-//     lastName: 'Fikre',
-//     email: 'aregawi@gmail.com',
-//     password: 'passpass',
-//     role: ['cook'],
-//     title: '',
-//     bio: '',
-//     save: jest.fn(), 
-//   } 
-  
-//   const mockAuthService = {
-//     create: jest.fn().mockResolvedValue(mockUser),
-//   }
-
-//   beforeEach(async () => {
-//     const module: TestingModule = await Test.createTestingModule({
-//       providers: [
-//         AuthService,
-//         JwtService,
-//         {
-//           provide: getModelToken(User.name),
-//           useValue: mockAuthService,
-//         },
-//       ],
-//     }).compile();
-
-//     authService = module.get<AuthService>(AuthService);
-//     model = module.get<Model<User>>(getModelToken(User.name));
-//     jwtServiceMock = module.get<JwtService>(JwtService);
-//   });
-
-//   it('should be defined', () => {
-//     expect(authService).toBeDefined();
-//   });
-
-//   describe('signUp', () => {
-//     const signUpDto: SignUpDto = {
-//       firstName: 'Aregawi',
-//       lastName: 'Fikre',
-//       email: 'aregawi@gmail.com',
-//       password: 'passpass',
-//       role: 'cook',
-//       title: '',
-//       bio: ''
-//     };
-
-//     it('should register a new user and return token and role', async () => {
-//       jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedPassword');
-//       jest.spyOn(model, 'create').mockResolvedValue(mockUser);
-//       jest.spyOn(jwtServiceMock, 'sign').mockReturnValue('{token: token, role: user.role}');
-
-//       const result = await authService.signUp(signUpDto);
-
-//       expect(bcrypt.hash).toHaveBeenCalled();
-//       expect(result).toEqual(jwtServiceMock.sign(mockUser));
-//     });
-
-//     it('should throw duplicate email error', async () => {
-//       jest.spyOn(model, 'create').mockRejectedValue({ code: 11000 });
-
-//       await expect(authService.signUp(signUpDto)).rejects.toThrow(ConflictException);
-//     });
-//   });
-// });
-
-
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
-import { ConflictException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { Document, Model } from 'mongoose';
-import { SignUpDto } from '../dto/signup.dto';
+import { UnauthorizedException, ConflictException } from '@nestjs/common';
 import { User } from '../schemas/user.schema';
-import { Z_UNKNOWN } from 'zlib';
+import * as bcrypt from 'bcryptjs';
+import { Model } from 'mongoose';
 
 describe('AuthService', () => {
-  let authService: AuthService;
-  let model: Model<User>;
-  let jwtServiceMock: JwtService;
+  let service: AuthService;
+  let jwtService: JwtService;
+  let userModel: Model<User>;
 
-  // const mockUser = {
-  const mockUser: Document & User & { _id: any } = {
-    _id: '659fd3f8849fdf01fefa59d4',
-    firstName: 'Aregawi',
-    lastName: 'Fikre',
-    email: 'aregawi@gmail.com',
-    password: 'passpass',
-    role: ['cook'],
-    title: '',
-    bio: '',
-    save: jest.fn(),
-  }  as unknown as User;
+  const mockJwtService = {
+    sign: jest.fn(),
+  };
 
-  const mockAuthService = {
-    create: jest.fn().mockResolvedValue(mockUser),
-  }
+  const mockUserModel = {
+    create: jest.fn(),
+    findOne: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-        JwtService,
-        {
-          provide: getModelToken(User.name),
-          useValue: mockAuthService,
-        },
+        { provide: getModelToken(User.name), useValue: mockUserModel },
+        { provide: JwtService, useValue: mockJwtService },
       ],
     }).compile();
 
-    authService = module.get<AuthService>(AuthService);
-    model = module.get<Model<User>>(getModelToken(User.name));
-    jwtServiceMock = module.get<JwtService>(JwtService);
+    service = module.get<AuthService>(AuthService);
+    jwtService = module.get<JwtService>(JwtService);
+    userModel = module.get<Model<User>>(getModelToken(User.name));
   });
-  
-  // ... rest of the code
-    
+
   it('should be defined', () => {
-    expect(authService).toBeDefined();
+    expect(service).toBeDefined();
   });
 
   describe('signUp', () => {
-    const signUpDto: SignUpDto = {
-      firstName: 'Aregawi',
-      lastName: 'Fikre',
-      email: 'aregawi@gmail.com',
-      password: 'passpass',
-      role: 'cook',
-      title: '',
-      bio: ''
-    };
+    it('should create a user and return a token and role', async () => {
+      const signUpDto = {
+        firstName: 'Test',
+        lastName: 'User',
+        email: 'test@example.com',
+        password: 'password',
+        role: ['user'],
+        title: 'Test Title',
+        bio: 'Test Bio',
+      };
 
-    it('should register a new user and return token and role', async () => {
-      jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedPassword');
-      jest.spyOn(model, 'create').mockResolvedValue(mockUser);
-      jest.spyOn(jwtServiceMock, 'sign').mockReturnValue('{token: token, role: user.role}');
+      const createdUser = {
+        ...signUpDto,
+        _id: 'a uuid',
+        password: await bcrypt.hash(signUpDto.password, 10),
+      };
 
-      const result = await authService.signUp(signUpDto);
+      mockUserModel.create.mockResolvedValue(createdUser);
+      mockJwtService.sign.mockReturnValue('a jwt token');
 
-      expect(bcrypt.hash).toHaveBeenCalled();
-      expect(result).toEqual(jwtServiceMock.sign(mockUser));
+      const result = await service.signUp(signUpDto);
+
+      expect(result).toEqual({ token: 'a jwt token', role: signUpDto.role });
     });
 
-    it('should throw duplicate email error', async () => {
-      jest.spyOn(model, 'create').mockRejectedValue({ code: 11000 });
+    it('should throw a ConflictException if email is already in use', async () => {
+      const signUpDto = {
+        firstName: 'Test',
+        lastName: 'User',
+        email: 'test@example.com',
+        password: 'password',
+        role: ['user'],
+        title: 'Test Title',
+        bio: 'Test Bio',
+      };
 
-      await expect(authService.signUp(signUpDto)).rejects.toThrow(ConflictException);
+      mockUserModel.create.mockRejectedValue({ name: 'MongoError', code: 11000 });
+
+      await expect(service.signUp(signUpDto)).rejects.toThrow(ConflictException);
+    });
   });
-})
+
+  // ... rest of your code
 });
