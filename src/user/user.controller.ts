@@ -15,8 +15,15 @@ export class UserController {
   }
 
   @Patch(':id')
-  async updateUser(@Param('id') userId: string, @Body() updatedUser: updateUserDto): Promise<User> {
-    return this.userService.updateById(userId, updatedUser);
+  async updateUser(@Param('id') userId: string, @Body() firstName: string, @Body()lastName:string ,@Body() email: string) {
+    //return this.userService.updateById(userId, updatedUser);
+    try{
+      this.userService.updateById(userId, firstName, lastName, email);
+    }
+    catch{
+      throw new Error('could not update user')
+    }
+    
   }
 
   @Delete(':id')
