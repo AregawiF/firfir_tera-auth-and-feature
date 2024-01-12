@@ -36,65 +36,6 @@ describe('RecipeService', () => {
     jest.clearAllMocks();
   });
 
-  //   Other test cases...
-
-  //   describe('insertRecipe', () => {
-  //     it('should create a recipe if the user is a cook', async () => {
-  //       const mockAuthorizationHeader = 'Bearer mockToken';
-  //   const mockDecodedToken:JwtPayload = { id: "1", role: ['cook'] };
-
-  //       const mockRecipe= {
-
-  //       name: 'Test Recipe',
-  //       description: 'This is a test recipe',
-  //       cookTime: 30,
-  //       people: 4,
-  //         ingredients: ['Ingredient 1', 'Ingredient 2'],
-  //         steps: ['Step 1', 'Step 2'],
-  //         fasting: false,
-  //         type: Category.DINNER, // Adjust based on your enum or string values
-  //         image: 'https://example.com/test-image.jpg',
-  //         cook_id: 'mockUserId',
-  //       };
-
-  //       jest.spyOn(service, "decodeToken").mockResolvedValueOnce(mockDecodedToken);
-
-  //       // Mock the create method to resolve with the provided mockRecipe
-  //       jest.spyOn(model, 'create').mockResolvedValueOnce(mockRecipe as Document<unknown, {}, Recipe>)
-
-  //     });
-
-  //     it('should throw UnauthorizedException if the user is not a cook', async () => {
-  //       const mockAuthorizationHeader = 'Bearer mockToken';
-  //       const mockDecodedToken: {
-  //         id: string;
-  //         role: string[];
-  //       } = { id: 'mockUserId', role: ['normal'] };
-
-  // jest.spyOn(service, 'decodeToken').mockResolvedValueOnce(mockDecodedToken);
-
-  //       // Create a real recipe for testing
-  //       const mockRecipeData: Recipe = {
-  //         name: 'Test Recipe',
-  //         description: 'This is a test recipe',
-  //         cookTime: 30,
-  //         people: 4,
-  //         ingredients: ['Ingredient 1', 'Ingredient 2'],
-  //         steps: ['Step 1', 'Step 2'],
-  //         fasting: false,
-  //         type: Category.FASTING, // Adjust based on your enum or string values
-  //         image: 'https://example.com/test-image.jpg',
-  //         cook_id: 'mockUserId',
-  //       };
-
-  //       // Ensure that the create method is not called in this scenario
-  //       mockRecipeModel.create.mockRejectedValueOnce(new UnauthorizedException());
-
-  //       await expect(service.insertRecipe(mockRecipeData, mockAuthorizationHeader)).rejects.toThrowError(UnauthorizedException);
-  //       expect(mockRecipeModel.create).not.toHaveBeenCalled();
-  //     });
-  //   });
-
   describe('showAll', () => {
     it('should return all recipes', async () => {
       const mockRecipes: Recipe[] = [

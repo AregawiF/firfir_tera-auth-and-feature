@@ -5,11 +5,11 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Recipe } from '../schemas/recipe.schema';
+import { Recipe } from 'src/schemas/recipe.schema';
 import { Query } from 'express-serve-static-core';
 import * as jwt from 'jsonwebtoken';
 
-export interface JwtPayload {
+interface JwtPayload {
   id: string;
   role: string | string[];
 }
@@ -27,9 +27,10 @@ export class RecipeService {
   }
 
   async getSingleRecipe(recipeId: string) {
+    console.log(recipeId);
     let recipe;
     try {
-      recipe = await this.recipeModel.findById(recipeId);
+      recipe = await this.recipeModel.findById(recipeId).exec();
     } catch {
       throw new NotFoundException('Could not find recipe');
     }
@@ -41,13 +42,13 @@ export class RecipeService {
 
   async getRecipesByCookId(cookId: string): Promise<Recipe[]> {
     try {
-      const recipes = await this.recipeModel.find({ cook_id: cookId });
+      const recipes = await this.recipeModel.find({ cook_id: cookId }).exec();
       if (!recipes || recipes.length === 0) {
         throw new NotFoundException('No recipes found');
       }
       return recipes;
     } catch (error) {
-      throw new NotFoundException('Recipe Not Found');
+      throw new NotFoundException('No recipes found');
     }
   }
 
@@ -55,13 +56,13 @@ export class RecipeService {
     let recipe;
     try {
       recipe = await this.recipeModel.find({ fasting: fasting });
-      if (!recipe || recipe.length === 0) {
-        throw new NotFoundException('Recipe Not Found');
-      }
-      return recipe;
-    } catch (error) {
+    } catch {
+      throw new NotFoundException('Recipe not found');
+    }
+    if (!recipe) {
       throw new NotFoundException('Recipe Not Found');
     }
+    return recipe;
   }
 
   async getByType(type) {
@@ -72,7 +73,7 @@ export class RecipeService {
     } catch {
       throw new NotFoundException('Recipe not found');
     }
-    if (!recipe || recipe.length === 0) {
+    if (!recipe) {
       throw new NotFoundException('Recipe Not Found');
     }
     return recipe;
@@ -105,13 +106,13 @@ export class RecipeService {
         'Only cooks are allowed to create recipes',
       );
     }
-
+    console.log(recipe);
     const createdRecipe = await this.recipeModel.create(recipe);
     return createdRecipe;
   }
 
-  async searchByTitle(title: string): Promise<Recipe[]> {
-    const recipes = await this.recipeModel.find({ title });
+  async searchByTitle(name: string): Promise<Recipe[]> {
+    const recipes = await this.recipeModel.find({ name });
     if (!recipes || recipes.length === 0) {
       throw new NotFoundException('Recipe not found!');
     }
@@ -119,17 +120,65 @@ export class RecipeService {
     return recipes;
   }
 
-  async updateById(id: string, recipe: Recipe): Promise<Recipe> {
-    const updatedRecipe = await this.recipeModel.findByIdAndUpdate(id, recipe, {
-      new: true,
-      runValidators: true,
-    });
+  // async updateById(id: string, recipe: Recipe): Promise<Recipe> {
+  //   const updatedRecipe = await this.recipeModel.findByIdAndUpdate(id, recipe, {
+  //     new: true,
+  //     runValidators: true,
+  //   });
 
-    if (!updatedRecipe) {
-      throw new NotFoundException(`Could not find recipe with ID ${id}`);
+  //   if (!updatedRecipe) {
+  //     throw new NotFoundException(`Could not find recipe with ID ${id}`);
+  //   }
+
+  //   return updatedRecipe;
+  // }
+
+  async updateRecipe(
+    recipeId,
+    recipeName,
+    recipeDesc,
+    cooktime,
+    people,
+    steps,
+    ings,
+    fasting,
+    type,
+    image,
+  ) {
+    console.log(recipeId, recipeName);
+    let updated;
+    try {
+      updated = await this.recipeModel.findById(recipeId);
+    } catch {
+      throw new NotFoundException('could not find reicpe');
     }
-
-    return updatedRecipe;
+    if (recipeName) {
+      updated.name = recipeName;
+    }
+    if (recipeDesc) {
+      updated.description = recipeDesc;
+    }
+    if (cooktime) {
+      updated.cookTime = cooktime;
+    }
+    if (people) {
+      updated.people = people;
+    }
+    if (steps) {
+      updated.steps = steps;
+    }
+    if (ings) {
+      updated.ingredients = ings;
+    }
+    updated.fasting = fasting;
+    if (type) {
+      updated.type = type;
+    }
+    if (image) {
+      updated.image = image;
+    }
+    updated.save();
+    console.log(updated);
   }
 
   async deleteById(id: string): Promise<Recipe> {
@@ -142,7 +191,7 @@ export class RecipeService {
     return deletedRecipe as Recipe;
   }
 
-  async decodeToken(authorizationHeader: string): Promise<any> {
+  private decodeToken(authorizationHeader: string): JwtPayload | null {
     if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
       const token = authorizationHeader.substring(7);
       try {
