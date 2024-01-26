@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   Body,
   Controller,
@@ -13,6 +14,9 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+=======
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Headers, UseGuards, UploadedFile, UseInterceptors } from '@nestjs/common';
+>>>>>>> 29d17282a90ff2728844138a5eed2ab849bf5721
 import { RecipeService } from './recipe.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/Upload/multer.config';
@@ -42,6 +46,7 @@ export class RecipeController {
   @UseInterceptors(FileInterceptor('image', multerConfig))
   @Roles(Role.COOK)
   async createRecipe(
+<<<<<<< HEAD
     @Body('name') name: string,
     @Body('description') description: string,
     @Body('cookTime') cookTime: number,
@@ -82,6 +87,22 @@ export class RecipeController {
       },
       authorization,
     );
+=======
+    @Body("name") name: string,
+    @Body("description") description: string,
+    @Body("cookTime") cookTime: number,
+    @Body("people") people: number,
+    @Body("ingredients") ingredients: string[],
+    @Body("steps") steps: string[],
+    @Body("fasting") fasting: boolean,
+    @Body("type") type: Category,
+    @UploadedFile() file: Express.Multer.File,
+    @Headers("Authorization") authorization: string): Promise<Recipe> {
+    this.uploadService.uploadFile(file)
+    
+    console.log("the file is", name,description,cookTime,people,ingredients,steps,fasting,type,file.path)
+    const createdRecipe = await this.recipeService.insertRecipe({ name, description, cookTime, people, ingredients, steps, fasting, type, image: file.path, cook_id: "1" }, authorization);
+>>>>>>> 29d17282a90ff2728844138a5eed2ab849bf5721
     return createdRecipe;
   }
 
@@ -92,14 +113,22 @@ export class RecipeController {
 
   @Get(':id')
   async getProduct(@Param('id') prodId: string) {
+<<<<<<< HEAD
     console.log(prodId);
+=======
+    console.log(prodId)
+>>>>>>> 29d17282a90ff2728844138a5eed2ab849bf5721
     return await this.recipeService.getSingleRecipe(prodId);
   }
 
   @Get('myrecipes/:cookId')
   @Roles(Role.COOK)
   async getRecipesByCookId(@Param('cookId') cookId: string): Promise<Recipe[]> {
+<<<<<<< HEAD
     console.log(cookId);
+=======
+    console.log(cookId)
+>>>>>>> 29d17282a90ff2728844138a5eed2ab849bf5721
     return this.recipeService.getRecipesByCookId(cookId);
   }
 
@@ -119,7 +148,11 @@ export class RecipeController {
 
   // @Patch(':id')
   // @Roles(Role.COOK)
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 29d17282a90ff2728844138a5eed2ab849bf5721
   // async updateRecipe(
   //   @Param('id')
   //   id: string,
@@ -130,6 +163,7 @@ export class RecipeController {
   //   return this.recipeService.updateById(id, recipe)
   // }
 
+<<<<<<< HEAD
   @Patch(':id')
   @Roles(Role.COOK)
   async updateProduct(
@@ -158,6 +192,42 @@ export class RecipeController {
       image,
     );
   }
+=======
+
+  @Patch(':id')
+  @Roles(Role.COOK)
+        async updateProduct(
+            @Param('id') recipeId: string,
+            @Body('name') recipeName : string,
+            @Body('description') recipeDesc : string,
+            @Body('cookTime') cooktime: number,
+            @Body('people') people: number,
+            @Body('steps')  steps: string[],
+            @Body('ingredients') ings: string[],
+            @Body('fasting') fasting : boolean,
+            @Body('type') type: string,
+            @Body('image') image: string
+            
+        ){ 
+            console.log("the Id is:", recipeId)
+            return await this.recipeService.updateRecipe(
+                recipeId,
+                recipeName,
+                recipeDesc,
+                cooktime,
+                people,
+                steps,
+                ings,
+                fasting,
+                type,
+                image
+                
+             );
+        }
+
+
+
+>>>>>>> 29d17282a90ff2728844138a5eed2ab849bf5721
 
   @Delete(':id')
   @Roles(Role.COOK)

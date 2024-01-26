@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 // import { Category } from "../schemas/recipe.schema";
 
@@ -53,6 +54,11 @@ import {
   IsString,
 } from 'class-validator';
 import { Category } from '../schemas/recipe.schema';
+=======
+import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { Category } from "../schemas/recipe.schema";
+
+>>>>>>> 29d17282a90ff2728844138a5eed2ab849bf5721
 
 export class createRecipeDto {
   @IsString()

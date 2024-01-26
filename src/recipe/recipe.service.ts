@@ -101,12 +101,20 @@ export class RecipeService {
 
     if (decodedToken.role.includes('cook')) {
       recipe.cook_id = decodedToken.id;
+<<<<<<< HEAD
     } else {
       throw new UnauthorizedException(
         'Only cooks are allowed to create recipes',
       );
     }
     console.log(recipe);
+=======
+    } 
+    else {
+      throw new UnauthorizedException('Only cooks are allowed to create recipes');
+    }
+    console.log(recipe)
+>>>>>>> 29d17282a90ff2728844138a5eed2ab849bf5721
     const createdRecipe = await this.recipeModel.create(recipe);
     return createdRecipe;
   }
@@ -120,6 +128,10 @@ export class RecipeService {
     return recipes;
   }
 
+<<<<<<< HEAD
+=======
+  
+>>>>>>> 29d17282a90ff2728844138a5eed2ab849bf5721
   // async updateById(id: string, recipe: Recipe): Promise<Recipe> {
   //   const updatedRecipe = await this.recipeModel.findByIdAndUpdate(id, recipe, {
   //     new: true,
@@ -133,7 +145,11 @@ export class RecipeService {
   //   return updatedRecipe;
   // }
 
+<<<<<<< HEAD
   async updateRecipe(
+=======
+  async updateRecipe (
+>>>>>>> 29d17282a90ff2728844138a5eed2ab849bf5721
     recipeId,
     recipeName,
     recipeDesc,
@@ -143,6 +159,7 @@ export class RecipeService {
     ings,
     fasting,
     type,
+<<<<<<< HEAD
     image,
   ) {
     console.log(recipeId, recipeName);
@@ -181,6 +198,50 @@ export class RecipeService {
     console.log(updated);
   }
 
+=======
+    image
+)
+{
+    console.log(recipeId, recipeName)
+    let updated
+    try{
+        updated = await this.recipeModel.findById(recipeId);
+    }
+    catch{
+        throw new NotFoundException('could not find reicpe')
+    }
+    if (recipeName){
+        updated.name = recipeName   
+    }
+    if (recipeDesc){
+        updated.description= recipeDesc
+    }
+    if (cooktime){
+        updated.cookTime = cooktime
+
+    }
+    if (people) {
+        updated.people = people
+    }
+    if (steps){
+        updated.steps = steps
+    }
+    if (ings) {
+        updated.ingredients = ings
+    }
+    updated.fasting = fasting   
+    if (type){
+        updated.type = type
+    }
+    if (image){
+        updated.image = image
+    }
+    updated.save();
+    console.log(updated)
+}
+  
+  
+>>>>>>> 29d17282a90ff2728844138a5eed2ab849bf5721
   async deleteById(id: string): Promise<Recipe> {
     const deletedRecipe = await this.recipeModel.findByIdAndDelete(id).lean();
 

@@ -10,7 +10,6 @@ export class UploadService {
       throw new BadRequestException('No file provided');
     }
 
-    // File path is accessible through 'file.path'
     console.log('File path:', file.path);
 
     return file.path;
