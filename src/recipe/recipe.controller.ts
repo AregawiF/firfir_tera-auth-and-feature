@@ -37,10 +37,6 @@ export class RecipeController {
     private readonly uploadService: UploadService,
   ) {}
 
-  @Get()
-  async getAllRecipes(): Promise<Recipe[]> {
-    return this.recipeService.showAll();
-  }
 
   @Post('new')
   @UseInterceptors(FileInterceptor('image', multerConfig))

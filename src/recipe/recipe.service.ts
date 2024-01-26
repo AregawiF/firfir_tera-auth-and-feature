@@ -21,11 +21,6 @@ export class RecipeService {
     private recipeModel: Model<Recipe>,
   ) {}
 
-  async showAll(): Promise<Recipe[]> {
-    const recipes = await this.recipeModel.find();
-    return recipes;
-  }
-
   async getSingleRecipe(recipeId: string) {
     console.log(recipeId);
     let recipe;
